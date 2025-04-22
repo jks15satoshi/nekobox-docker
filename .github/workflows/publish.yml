@@ -1,0 +1,95 @@
+name: Publish image
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  push:
+    tags: ['v*.*.*-post.*']
+
+env:
+  PACKAGE_REGISTRY: ghcr.io
+  IMAGE_NAME: jks15satoshi/nekobox
+
+jobs:
+  check-version:
+    name: Check package version
+    runs-on: ubuntu-latest
+    outputs:
+      tag_found: ${{ steps.check_image_tag.outputs.tag }}
+      nekobox_version: ${{ steps.check_nekobox.outputs.NEKOBOX_VERSION }}
+
+    steps:
+      - name: Fetch latest version of NekoBox
+        id: check_nekobox
+        run: |
+          if [[ "${{ github.event_name }}" == "push" ]]; then
+            echo NEKOBOX_VERSION=$(echo "${{ github.ref_name }}" | sed 's/^v//') > ${GITHUB_OUTPUT}
+          else
+            sudo apt install curl jq
+            echo NEKOBOX_VERSION=$(curl -s https://pypi.org/pypi/nekobox/json | jq -r ".info.version") >> ${GITHUB_OUTPUT}
+          fi
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.PACKAGE_REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check if image tag exists
+        id: check_image_tag
+        uses: tyriis/docker-image-tag-exists@v2.1.0
+        with:
+            registry: ghcr.io
+            repository: ${{ env.IMAGE_NAME }}
+            tag: ${{ steps.check_nekobox.outputs.NEKOBOX_VERSION }}
+
+  push-image:
+    name: Push image to registry
+    runs-on: ubuntu-latest
+    needs: [check-version]
+    if: ${{ needs.check-version.outputs.tag_found == 'not found' }}
+
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.PACKAGE_REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        id: push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ env.PACKAGE_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.check-version.outputs.nekobox_version }}
+            ${{ env.PACKAGE_REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+
+      - name: Generate artifact attestation
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-name: ${{ env.PACKAGE_REGISTRY }}/${{ env.IMAGE_NAME }}
+          subject-digest: ${{ steps.push.outputs.digest }}
+          push-to-registry: true
+
+      - name: Create release
+        uses: ncipollo/release-action@v1
+        if: ${{ github.event_name == 'schedule' }}
+        with:
+          tag: ${{ needs.check-version.outputs.nekobox_version }}
+          body: |
+            ## 上游版本更新
+
+            NekoBox 版本更新至 v${{ needs.check-version.outputs.nekobox_version }}。
