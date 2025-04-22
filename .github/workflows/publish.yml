@@ -5,6 +5,7 @@ on:
     - cron: "0 0 * * *"
   push:
     tags: ['v*.*.*-post.*']
+  workflow_dispatch:
 
 env:
   PACKAGE_REGISTRY: ghcr.io
