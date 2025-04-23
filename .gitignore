@@ -1,0 +1,5 @@
+.digests/
+.vscode/
+bots/
+logs/
+nekobox.ini
