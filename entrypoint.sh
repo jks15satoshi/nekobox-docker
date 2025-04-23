@@ -1,13 +1,12 @@
 #!/bin/sh
-
 NEKOBOX_CONFIG=/nekobox/nekobox.ini
 
-function prtinfo() {
+prtinfo() {
   echo "[INFO] $1"
 }
 
-function prterr() {
-  echo -e "\e[0;31m[ERROR] $1\e[0m" >&2
+prterr() {
+  printf "\e[0;31m[ERROR] %s\e[0m" "$1" >&2
 }
 
 ####################################################
@@ -22,8 +21,8 @@ function prterr() {
 #   NEKOBOX_DEPLOY_PATH
 #   NEKOBOX_LOG_LEVEL
 ####################################################
-function genconf() {
-  nekobox gen > /dev/null 2>&1 << ARGS
+genconf() {
+  nekobox gen >/dev/null 2>&1 <<ARGS
 ${NEKOBOX_UIN}
 ${NEKOBOX_SIGN_SERVER}
 ${NEKOBOX_PROTOCOL_TYPE}
@@ -35,9 +34,9 @@ ${NEKOBOX_LOG_LEVEL}
 ARGS
 
   prtinfo "Config file generated."
-  if [ -z ${NEKOBOX_AUTH_TOKEN} ]; then
+  if [ -z "${NEKOBOX_AUTH_TOKEN}" ]; then
     prtinfo "Auth token has been randomly generated since it is not be \
-explictly specified. You can check it in the 'nekobox.ini' config file or \
+explicitly specified. You can check it in the 'nekobox.ini' config file or \
 use 'nekobox show ${NEKOBOX_UIN}' command."
   fi
 }
@@ -47,11 +46,11 @@ use 'nekobox show ${NEKOBOX_UIN}' command."
 # Arguments:
 #   A numeric string representing the user ID (uin).
 # Outputs:
-#   The key-value pairs of the user configuration. Key-value pairs are 
+#   The key-value pairs of the user configuration. Key-value pairs are
 #   separated by an equals sign (`=`). Each pair is printed on a new line.
-#   Nothing is printed if the user does not exist.
+#   Nothing will be printed if the user does not exist.
 ##########################################################################
-function readconf() {
+readconf() {
   awk -v target="$1" '
   BEGIN {
     in_section = 0
@@ -86,13 +85,13 @@ function readconf() {
 # function is_conf_changed() {}
 
 # Main process
-if [ -z ${NEKOBOX_UIN} ]; then
+if [ -z "${NEKOBOX_UIN}" ]; then
   prterr "You must specify env 'NEKOBOX_UIN' to decide which account do you \
 want to use."
   exit 1
 fi
 
-if [ -z ${NEKOBOX_SIGN_SERVER} ]; then
+if [ -z "${NEKOBOX_SIGN_SERVER}" ]; then
   prterr "You must provide a sign server address by specifying env \
 'NEKOBOX_SIGN_SERVER'."
   exit 1
@@ -101,7 +100,7 @@ fi
 if [ ! -f ${NEKOBOX_CONFIG} ]; then
   prtinfo "No config file found. Attempt to generate config from env..."
   genconf
-elif ! nekobox show ${NEKOBOX_UIN}; then
+elif ! nekobox show "${NEKOBOX_UIN}"; then
   prtinfo "Specified UIN not found in the config file. Attempt to update \
 config from env..."
   genconf
@@ -114,7 +113,7 @@ fi
 prtinfo "Running NekoBox server..."
 if [ "${NEKOBOX_FILE_QRCODE:-false}" = "true" ]; then
   prtinfo "Note: QR code will be saved as a file."
-  nekobox run --file-qrcode ${NEKOBOX_UIN}
+  nekobox run --file-qrcode "${NEKOBOX_UIN}"
 else
-  nekobox run ${NEKOBOX_UIN}
+  nekobox run "${NEKOBOX_UIN}"
 fi
