@@ -1,4 +1,5 @@
-FROM python:3.12-alpine
+ARG base_tag=3.12-alpine
+FROM python:${base_tag}
 
 ARG version
 RUN if [ -z "${version}" ]; then \
