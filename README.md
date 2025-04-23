@@ -4,9 +4,9 @@
 
 ## 构建说明
 
-CI 流程会在每天 0 时（UTC）自动运行检查 PyPI 中 `nekobox` 的最新版本，当存在更新版本发布则会使用新版本构建 Docker 镜像，版本标签与 PyPI 版本号保持一致。
+CI 流程会在每天 0 时（UTC）自动运行检查 PyPI 中 `nekobox` 的最新版本，当存在更新版本发布则会使用新版本构建 Docker 镜像，版本标签与 PyPI 版本号保持一致；如果镜像文件更新而 nekobox 包尚未更新，则会以 `-post.x` 版本标签进行构建。
 
-如果镜像程序更新而 `nekobox` 包未更新，则会以 `-post.x` 版本标签进行构建。
+CI 流程基于 Python 3.12 构建镜像。包含 `audio` 可选包。
 
 ## 部署
 
@@ -54,10 +54,46 @@ CI 流程会在每天 0 时（UTC）自动运行检查 PyPI 中 `nekobox` 的最
 | `NEKOBOX_DEPLOY_PATH`   | 服务器部署路径   |      |                     |                                             |
 | `NEKOBOX_LOG_LEVEL`     | 日志等级         |      | `INFO`              | `DEBUG` `INFO` `WARNING` `ERROR` `CRITICAL` |
 
-## 执行选项
+## 运行选项
 
 可以使用以下环境变量控制运行选项：
 
 | 变量名称              | 说明               | 默认值  | 可选值         |
 |-----------------------|--------------------|---------|----------------|
 | `NEKOBOX_FILE_QRCODE` | 使用文件保存二维码 | `false` | `true` `false` |
+
+## 调用 NekoBox CLI
+
+一些操作（例如删除配置等）可能无法通过镜像入口脚本实现，此时你可能会希望通过 NekoBox CLI 手动操作，你可以通过以下命令实现：
+
+```shell
+docker exec -it nekobox nekobox <args>
+```
+
+例如删除配置就可以这样操作：
+
+```shell
+$ docker exec -it nekobox nekobox delete 100
+账号 100 的配置已删除
+```
+
+## 手动构建
+
+如果你希望自行构建镜像，可以通过以下命令进行构建：
+
+```shell
+git clone https://github.com/jks15satoshi/nekobox-docker.git
+cd nekobox-docker
+docker build -t nekobox .
+```
+
+构建时，可以按需传入构建参数，参数列表如下：
+
+| 参数名称   | 说明              | 默认值        |
+|------------|-------------------|---------------|
+| `base_tag` | Python 镜像标签   | `3.12-alpine` |
+| `version`  | 指定 NekoBox 版本 |               |
+
+## 许可协议
+
+本项目使用 [AGPL-3.0 协议](./LICENSE) 开放源代码。
