@@ -73,6 +73,8 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
+          build-args: |
+            "version=${{ needs.check-version.outputs.nekobox_version }}"
           push: true
           tags: |
             ${{ env.PACKAGE_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.check-version.outputs.nekobox_version }}
