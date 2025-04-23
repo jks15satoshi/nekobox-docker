@@ -82,22 +82,6 @@ function readconf() {
   ' ${NEKOBOX_CONFIG}
 }
 
-######################################################
-# Check if a user exists in the configuration file.
-# Arguments:
-#   A numeric string representing the user ID (uin).
-# Returns:
-#   0 if the user exist, 1 if the user does not exist.
-######################################################
-function is_user_exists() {
-  local uin="$1"
-  if $(grep -o "^\[${uin}\]$" ${NEKOBOX_CONFIG} > /dev/null 2>&1); then
-    return 0
-  else
-    return 1
-  fi
-}
-
 # TODO: Update configurations if changed.
 # function is_conf_changed() {}
 
@@ -117,7 +101,7 @@ fi
 if [ ! -f ${NEKOBOX_CONFIG} ]; then
   prtinfo "No config file found. Attempt to generate config from env..."
   genconf
-elif ! is_user_exists ${NEKOBOX_UIN}; then
+elif ! nekobox show ${NEKOBOX_UIN}; then
   prtinfo "Specified UIN not found in the config file. Attempt to update \
 config from env..."
   genconf
