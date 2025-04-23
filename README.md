@@ -43,13 +43,21 @@ CI 流程会在每天 0 时（UTC）自动运行检查 PyPI 中 `nekobox` 的最
 
 如果 `nekobox.ini` 文件不存在，或指定的 `NEKOBOX_UIN` 在 NekoBox 实例中的账号列表中不存在，则会尝试通过 `nekobox gen` 命令创建或更新配置文件后运行，配置参数服从下列环境变量：
 
-| 变量名称                | 说明             | 必选 | 默认值                 |
-|-------------------------|------------------|------|------------------------|
-| `NEKOBOX_UIN`           | 账号 ID          | true |                        |
-| `NEKOBOX_SIGN_SERVER`   | 签名服务器 URL   | true |                        |
-| `NEKOBOX_PROTOCOL_TYPE` | 协议类型         |      | 服从签名服务器协议类型 |
-| `NEKOBOX_AUTH_TOKEN`    | 服务器认证 token |      | 由 NekoBox 随机生成    |
-| `NEKOBOX_BIND_ADDR`     | 服务器绑定地址   |      | `127.0.0.1`            |
-| `NEKOBOX_BIND_PORT`     | 服务器绑定端口   |      | `7777`                 |
-| `NEKOBOX_DEPLOY_PATH`   | 服务器部署路径   |      |                        |
-| `NEKOBOX_LOG_LEVEL`     | 日志等级         |      | `INFO`                 |
+| 变量名称                | 说明             | 必选 | 默认值              | 可选值                                      |
+|-------------------------|------------------|------|---------------------|---------------------------------------------|
+| `NEKOBOX_UIN`           | 账号 ID          | true |                     |                                             |
+| `NEKOBOX_SIGN_SERVER`   | 签名服务器 URL   | true |                     |                                             |
+| `NEKOBOX_PROTOCOL_TYPE` | 协议类型         |      | `remote`            | `remote` `windows` `macos` `linux`          |
+| `NEKOBOX_AUTH_TOKEN`    | 服务器认证 token |      | 由 NekoBox 随机生成 |                                             |
+| `NEKOBOX_BIND_ADDR`     | 服务器绑定地址   |      | `127.0.0.1`         |                                             |
+| `NEKOBOX_BIND_PORT`     | 服务器绑定端口   |      | `7777`              |                                             |
+| `NEKOBOX_DEPLOY_PATH`   | 服务器部署路径   |      |                     |                                             |
+| `NEKOBOX_LOG_LEVEL`     | 日志等级         |      | `INFO`              | `DEBUG` `INFO` `WARNING` `ERROR` `CRITICAL` |
+
+## 执行选项
+
+可以使用以下环境变量控制运行选项：
+
+| 变量名称              | 说明               | 默认值  | 可选值         |
+|-----------------------|--------------------|---------|----------------|
+| `NEKOBOX_FILE_QRCODE` | 使用文件保存二维码 | `false` | `true` `false` |

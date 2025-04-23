@@ -128,4 +128,9 @@ else
 fi
 
 prtinfo "Running NekoBox server..."
-nekobox run ${NEKOBOX_UIN}
+if [ "${NEKOBOX_FILE_QRCODE:-false}" = "true" ]; then
+  prtinfo "Note: QR code will be saved as a file."
+  nekobox run --file-qrcode ${NEKOBOX_UIN}
+else
+  nekobox run ${NEKOBOX_UIN}
+fi
