@@ -1,6 +1,11 @@
-FROM python:alpine
+FROM python:3.12-alpine
 
-RUN pip install nekobox
+ARG version
+RUN if [ -z "${version}" ]; then \
+    pip install -U "nekobox[audio]"; \
+    else \
+    pip install "nekobox[audio]==${version}"; \
+    fi
 
 RUN mkdir -p /nekobox
 WORKDIR /nekobox
