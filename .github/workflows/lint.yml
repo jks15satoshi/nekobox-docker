@@ -4,9 +4,13 @@ on:
   push:
     branches:
       - master
+    paths:
+      - entrypoint.sh
   pull_request:
     branches:
       - master
+    paths:
+      - entrypoint.sh
 
 jobs:
   lint:
