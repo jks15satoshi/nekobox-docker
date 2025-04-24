@@ -52,7 +52,7 @@ jobs:
     if: ${{ needs.check-version.outputs.tag_found == 'not found' }}
 
     permissions:
-      contents: read
+      contents: write
       packages: write
       attestations: write
       id-token: write
@@ -89,7 +89,7 @@ jobs:
 
       - name: Create release
         uses: ncipollo/release-action@v1
-        if: ${{ github.event_name == 'schedule' }}
+        if: ${{ github.event_name != 'push' }}
         with:
           tag: "v${{ needs.check-version.outputs.nekobox_version }}"
           body: |
