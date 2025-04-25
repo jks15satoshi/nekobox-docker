@@ -54,6 +54,11 @@ CI 流程基于 Python 3.12 构建镜像。包含 `audio` 可选包。
 | `NEKOBOX_DEPLOY_PATH`   | 服务器部署路径   |      |                     |                                             |
 | `NEKOBOX_LOG_LEVEL`     | 日志等级         |      | `INFO`              | `DEBUG` `INFO` `WARNING` `ERROR` `CRITICAL` |
 
+每次生成或更新配置时，都会根据当前配置生成摘要，以便在后续运行时检查配置是否发生变化。当配置发生变化时，会自动更新配置，以确保 NekoBox 实例始终服从环境变量的配置。
+
+> [!TIP]
+> 需要注意，如果没有指定认证 token，每次更新配置都会生成新的认证 token，此时客户端（bot 端）也需要同步更新认证 token 以避免认证失败。你可以在环境变量中指定认证 token 以避免 token 变化。
+
 ## 运行选项
 
 可以使用以下环境变量控制运行选项：
@@ -75,6 +80,12 @@ docker exec -it nekobox nekobox <args>
 ```shell
 $ docker exec -it nekobox nekobox delete 100
 账号 100 的配置已删除
+```
+
+具体的 CLI 用法请参见 [NekoBox 文档](https://github.com/wyapx/nekobox#cli-%E5%B7%A5%E5%85%B7)，或者执行：
+
+```shell
+docker exec -it nekobox nekobox --help
 ```
 
 ## 手动构建
