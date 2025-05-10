@@ -47,7 +47,7 @@ jobs:
             commit_sha=$(curl -s https://api.github.com/repos/wyapx/nekobox/commits/main | jq -r ".sha")
 
             version="main"
-            tag_name="${base_version}+${commit_sha:0:7}"
+            tag_name="${base_version}+build.${commit_sha:0:7}"
           else
             version="${base_version}"
             tag_name="${base_version}"
@@ -65,8 +65,8 @@ jobs:
             tag_name="${tag_name}${sep}${rev_parse}"
           fi
 
-          echo "version=$version" >> $GITHUB_OUTPUT
-          echo "tag_name=$tag_name" >> $GITHUB_OUTPUT
+          echo "version=${version}" >> $GITHUB_OUTPUT
+          echo "tag_name=${tag_name}" >> $GITHUB_OUTPUT
 
       - name: Check if image tag exists
         id: check_image_tag
