@@ -8,6 +8,8 @@ ENV NEKOBOX_UNSTABLE=${NEKOBOX_UNSTABLE:-false}
 
 ARG NEKOBOX_OPTIONAL_DEPS=audio
 
+RUN apk add --no-cache git
+
 RUN if [ "${NEKOBOX_UNSTABLE}" = true ]; then \
     pip install "git+https://github.com/wyapx/nekobox.git"; \
     else \
