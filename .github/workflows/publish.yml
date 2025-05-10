@@ -47,7 +47,7 @@ jobs:
             commit_sha=$(curl -s https://api.github.com/repos/wyapx/nekobox/commits/main | jq -r ".sha")
 
             version="main"
-            tag_name="${base_version}+build.${commit_sha:0:7}"
+            tag_name="${base_version}-${commit_sha:0:7}"
           else
             version="${base_version}"
             tag_name="${base_version}"
