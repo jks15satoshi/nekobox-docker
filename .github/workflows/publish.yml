@@ -54,7 +54,7 @@ jobs:
           fi
 
           if [[ "${{ github.event_name }}" == "push" ]]; then
-            rev_parse=$(echo "${{ github.ref_name }}" | sed 's/^v[[:digit:]]*.[[:digit:]]*.[[:digit:]]*+//'))
+            rev_parse=$(echo "${{ github.ref_name }}" | sed 's/^v[[:digit:]]*.[[:digit:]]*.[[:digit:]]*+//')
             
             if [[ "${{ matrix.tag_variant }}" == "unstable" ]]; then
               sep="."
