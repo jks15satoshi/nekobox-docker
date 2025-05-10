@@ -9,18 +9,18 @@ ENV NEKOBOX_UNSTABLE=${NEKOBOX_UNSTABLE:-false}
 ARG NEKOBOX_OPTIONAL_DEPS=audio
 
 RUN if [ "${NEKOBOX_UNSTABLE}" = true ]; then \
-    pip install "git+https://github.com/wyapx/nekobox.git" \
+    pip install "git+https://github.com/wyapx/nekobox.git"; \
     else \
     if [ -z "${NEKOBOX_OPTIONAL_DEPS}" ]; then \
-    nekobox="nekobox" \
+    nekobox="nekobox"; \
     else \
-    nekobox="nekobox[${NEKOBOX_OPTIONAL_DEPS}]" \
-    fi \
+    nekobox="nekobox[${NEKOBOX_OPTIONAL_DEPS}]"; \
+    fi; \
     if [ -z "${NEKOBOX_VERSION}" ]; then \
     pip install -U "${nekobox}"; \
     else \
     pip install "${nekobox}==${NEKOBOX_VERSION}"; \
-    fi \
+    fi; \
     fi
 
 RUN mkdir -p /nekobox
