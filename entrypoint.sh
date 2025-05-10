@@ -10,6 +10,15 @@ prtinfo() {
   printf "\e[0;34m[INFO]\e[0m %s\n" "$1"
 }
 
+# Print message with warning level.
+# Args:
+#   $1: The message to print.
+# Stdout:
+#   The formatted message.
+prtwarn() {
+  printf "\e[0;33m[WARN]\e[0m %s\n" "$1"
+}
+
 # Print message with error level.
 # Args:
 #   $1: The message to print.
@@ -64,6 +73,10 @@ use 'nekobox show ${NEKOBOX_UIN}' command."
 }
 
 # Main process
+if [ "${NEKOBOX_UNSTABLE}" = true ]; then
+  prtwarn "You are running an unstable version of NekoBox. Please use it at your own risk."
+fi
+
 if [ -z "${NEKOBOX_UIN}" ]; then
   prterr "You must specify env 'NEKOBOX_UIN' to decide which account do you \
 want to use."
