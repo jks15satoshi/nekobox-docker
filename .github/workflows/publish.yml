@@ -54,7 +54,7 @@ jobs:
           fi
 
           if [[ "${{ github.event_name }}" == "push" ]]; then
-            rev_parsed=$(echo "${{ github.ref_name }}" | perl -pe 's/.*(?=rev.[[:digit:]]*)/\1/'
+            rev_parsed=$(echo "${{ github.ref_name }}" | perl -pe 's/.*(?=rev.[[:digit:]]*)/\1/')
             tag_name="${tag_name}-${rev_parsed}"
           fi
 
