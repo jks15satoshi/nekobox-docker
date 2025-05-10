@@ -1,11 +1,16 @@
-ARG base_tag=3.12-alpine
-FROM python:${base_tag}
+ARG BASE_TAG=3.12-alpine
+FROM python:${BASE_TAG}
 
-ARG version
-RUN if [ -z "${version}" ]; then \
+ARG NEKOBOX_VERSION
+ARG NEKOBOX_DEVEL
+ENV NEKOBOX_DEVEL=${NEKOBOX_DEVEL:-false}
+
+RUN if [ "${NEKOBOX_DEVEL}" = true ]; then \
+    pip install "git+https://github.com/wyapx/nekobox.git" \
+    elif [ -z "${NEKOBOX_VERSION}" ]; then \
     pip install -U "nekobox[audio]"; \
     else \
-    pip install "nekobox[audio]==${version}"; \
+    pip install "nekobox[audio]==${NEKOBOX_VERSION}"; \
     fi
 
 RUN mkdir -p /nekobox
