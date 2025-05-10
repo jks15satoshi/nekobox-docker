@@ -4,7 +4,7 @@ on:
   schedule:
     - cron: "0 0 * * *"
   push:
-    tags: ["v*.*.*-post.*"]
+    tags: ["v*.*.*-rev.*"]
   workflow_dispatch:
 
 env:
