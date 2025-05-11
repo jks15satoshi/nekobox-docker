@@ -92,8 +92,8 @@ jobs:
         uses: ncipollo/release-action@v1
         if: ${{ matrix.tag_variant == 'latest' && steps.push_image.outcome == 'success' && github.event_name != 'push' }}
         with:
-          tag: "v${{ steps.fetch_version.outputs.version }}"
+          tag: "v${{ steps.fetch_version.outputs.base_version }}"
           body: |
             ## 上游版本更新
 
-            NekoBox 版本更新至 v${{ steps.fetch_version.outputs.version }}。
+            NekoBox 版本更新至 v${{ steps.fetch_version.outputs.base_version }}。
