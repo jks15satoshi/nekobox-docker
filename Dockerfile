@@ -6,24 +6,21 @@ ARG NEKOBOX_VERSION
 ARG NEKOBOX_UNSTABLE
 ENV NEKOBOX_UNSTABLE=${NEKOBOX_UNSTABLE:-false}
 
-ARG NEKOBOX_OPTIONAL_DEPS=audio
+ARG NEKOBOX_EXTRA_DEPS=audio
 
 RUN apk add --no-cache git
 
-RUN if [ "${NEKOBOX_UNSTABLE}" = true ]; then \
-    pip install "git+https://github.com/wyapx/nekobox.git"; \
+RUN if [ -z "${NEKOBOX_EXTRA_DEPS}" ]; then \
+    pkg="nekobox"; \
     else \
-    if [ -z "${NEKOBOX_OPTIONAL_DEPS}" ]; then \
-    nekobox="nekobox"; \
-    else \
-    nekobox="nekobox[${NEKOBOX_OPTIONAL_DEPS}]"; \
+    pkg="nekobox[${NEKOBOX_EXTRA_DEPS}]"; \
     fi; \
-    if [ -z "${NEKOBOX_VERSION}" ]; then \
-    pip install -U "${nekobox}"; \
-    else \
-    pip install "${nekobox}==${NEKOBOX_VERSION}"; \
+    if [ "${NEKOBOX_UNSTABLE}" = true ]; then \
+    pkg="${pkg} @ git+https://github.com/wyapx/nekobox.git@${NEKOBOX_VERSION:-main}"; \
+    elif [ -z "${NEKOBOX_VERSION}" ]; then \
+    pkg="${pkg}==${NEKOBOX_VERSION}}"; \
     fi; \
-    fi
+    pip install "${pkg}"
 
 RUN mkdir -p /nekobox
 WORKDIR /nekobox
