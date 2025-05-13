@@ -89,13 +89,13 @@ jobs:
           push-to-registry: true
 
       - name: Sync README to Docker Hub
-        uses: meeDamian/sync-readme@v1.0.6
+        uses: ms-jpq/sync-dockerhub-readme@v1
         if: ${{ matrix.registry == 'docker.io' }}
         with:
-          user: ${{ github.repository_owner }}
-          pass: ${{ secrets.DOCKERHUB_TOKEN }}
-          slug: ${{ env.IMAGE_NAME }}
-          description: true
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          repository: ${{ env.IMAGE_NAME }}
+          readme: ./README.md
 
       - name: Create release
         uses: ncipollo/release-action@v1
