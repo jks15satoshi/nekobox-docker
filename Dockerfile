@@ -8,7 +8,11 @@ ENV NEKOBOX_UNSTABLE=${NEKOBOX_UNSTABLE:-false}
 
 ARG NEKOBOX_EXTRA_DEPS=audio
 
-RUN apk add --no-cache git
+RUN case $( grep "^ID=" /etc/os-release | awk -F= '{print $2}' ) in \
+    "alpine") apk add --no-cache git ;; \
+    "debian") apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/* ;; \
+    *) echo "Unsupported OS" && exit 1 ;; \
+    esac
 
 RUN if [ -z "${NEKOBOX_EXTRA_DEPS}" ]; then \
     pkg="nekobox"; \
@@ -17,10 +21,10 @@ RUN if [ -z "${NEKOBOX_EXTRA_DEPS}" ]; then \
     fi; \
     if [ "${NEKOBOX_UNSTABLE}" = true ]; then \
     pkg="${pkg} @ git+https://github.com/wyapx/nekobox.git@${NEKOBOX_VERSION:-main}"; \
-    elif [ -z "${NEKOBOX_VERSION}" ]; then \
-    pkg="${pkg}==${NEKOBOX_VERSION}}"; \
+    elif [ ! -z "${NEKOBOX_VERSION}" ]; then \
+    pkg="${pkg}==${NEKOBOX_VERSION}"; \
     fi; \
-    pip install "${pkg}"
+    pip install --no-cache-dir "${pkg}"
 
 RUN mkdir -p /nekobox
 WORKDIR /nekobox
