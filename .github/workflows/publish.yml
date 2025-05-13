@@ -50,8 +50,8 @@ jobs:
             tag_name="${base_version}"
           fi
 
-          if [[ "${{ github.event_name }}" == "push" ]]; then
-            rev_parsed=$(echo "${{ github.ref_name }}" | perl -pe 's/.*(?=rev.[[:digit:]]*)/\1/')
+          rev_parsed=$(curl -s "https://api.github.com/repos/${{ github.repository }}/releases/latest" | jq -r ".tag_name" | perl -pe '$_ = /.*-(rev\.[0-9]+)/ ? $1 : ""')
+          if [[ ! -z "${rev_parsed}" ]]; then
             tag_name="${tag_name}-${rev_parsed}"
           fi
 
@@ -87,6 +87,15 @@ jobs:
           subject-name: ${{ matrix.registry }}/${{ env.IMAGE_NAME }}
           subject-digest: ${{ steps.push_image.outputs.digest }}
           push-to-registry: true
+
+      - name: Sync README to Docker Hub
+        uses: meeDamian/sync-readme@v1.0.6
+        if: ${{ matrix.registry == 'docker.io' }}
+        with:
+          user: ${{ github.repository_owner }}
+          pass: ${{ secrets.DOCKERHUB_TOKEN }}
+          slug: ${{ env.IMAGE_NAME }}
+          description: true
 
       - name: Create release
         uses: ncipollo/release-action@v1
