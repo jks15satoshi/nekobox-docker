@@ -2,9 +2,9 @@
 
 [NekoBox](https://github.com/wyapx/nekobox) 的 Docker 镜像。
 
-[![Run linter](https://github.com/jks15satoshi/nekobox-docker/actions/workflows/lint.yml/badge.svg)](https://github.com/jks15satoshi/nekobox-docker/actions/workflows/lint.yml)
 [![GHCR](https://img.shields.io/badge/Registry-GHCR-blue?logo=docker)](https://github.com/jks15satoshi/nekobox-docker/pkgs/container/nekobox)
 [![Docker Hub](https://img.shields.io/badge/Registry-Docker_Hub-blue?logo=docker)](https://hub.docker.com/r/jks15satoshi/nekobox)
+[![Run linter](https://github.com/jks15satoshi/nekobox-docker/actions/workflows/lint.yml/badge.svg)](https://github.com/jks15satoshi/nekobox-docker/actions/workflows/lint.yml)
 
 ## 构建说明
 
@@ -14,21 +14,27 @@ CI 流程会在每天 0 时（UTC）自动执行，检查 NekoBox 在 PyPI 中�
   - `release` 为 NekoBox 的发布版本号；
   - `rev.x` 为镜像修订版本，在此镜像更新且 NekoBox 未发布新版本时追加。
 
-  当前版本： ![Latest image](https://img.shields.io/docker/v/jks15satoshi/nekobox/latest?label=latest&color=blue)
+  当前版本：[![Latest image](https://img.shields.io/docker/v/jks15satoshi/nekobox/latest?label=latest&color=blue)](https://github.com/jks15satoshi/nekobox-docker/pkgs/container/nekobox)
+
 - `unstable`, `<release>-<short_commit_sha>[-rev.x]`：最新的非稳定版本，基于存储库 `main` 分支的最新提交构建。
 
   - `release` 为 NekoBox 的发布版本号；
   - `short_commit_sha` 为 GitHub 存储库 `main` 分支的最新提交的 7 位短哈希值；
   - `rev.x` 为镜像修订版本，在此镜像更新且 NekoBox 未创建新提交时追加。
 
-  当前版本：![Unstable image](https://img.shields.io/docker/v/jks15satoshi/nekobox/unstable?label=unstable&color=orange)
+  当前版本：[![Unstable image](https://img.shields.io/docker/v/jks15satoshi/nekobox/unstable?label=unstable&color=chocolate)](https://github.com/jks15satoshi/nekobox-docker/pkgs/container/nekobox)
 
 > [!WARNING]
 > 对于非稳定版本镜像，任何可能的非预期行为皆**合乎预期**。除非你十分清楚自己的行为，否则请勿将其用于生产环境。请自行承担使用非稳定版本的风险。
 >
 > 本项目不接受来自非稳定版本的任何问题反馈。
 
-CI 流程默认基于 Python 3.12 构建镜像。默认包含 `audio` 可选包。
+> [!TIP]
+> 如果你有明确的非稳定版本需求，比起使用 `unstable` 标签，更建议你在 NekoBox 存储库中找到你所需要的提交版本，并使用对应提交版本的镜像。
+>
+> 由于 CI 的定时检查机制，可能一些提交并不会被 CI 构建为镜像，如果你恰好遇到了此情况，则需要你参见 [手动构建](./README.md#手动构建) 部分自行构建镜像。
+
+CI 流程基于 Python 3.12 构建镜像。包含 `audio` 额外依赖。
 
 ## 部署
 
@@ -122,12 +128,12 @@ docker build -t nekobox .
 
 构建时，可以按需传入构建参数，参数列表如下：
 
-| 参数名称                    | 说明                  | 默认值        | 备注                                                                      |
-|-----------------------------|-----------------------|---------------|---------------------------------------------------------------------------|
-| `BASE_TAG`                  | Python 镜像标签       | `3.12-alpine` |                                                                           |
-| `NEKOBOX_VERSION`           | 指定 NekoBox 版本     |               |                                                                           |
-| `NEKOBOX_UNSTABLE`          | 是否构建非稳定版本    | `false`       | 为 `true` 时将无视 `NEKOBOX_VERSION` 参数，直接拉取存储库 `main` 分支代码 |
-| `NEKOBOX_OPTIONAL_DEPS`     | 安装 NekoBox 可选依赖 | `audio`       | 以逗号分隔的字符串，留空表示不安装可选依赖。目前仅支持 `audio`。          |
+| 参数名称                    | 说明                  | 默认值        | 备注                                                                                         |
+|-----------------------------|-----------------------|---------------|----------------------------------------------------------------------------------------------|
+| `BASE_TAG`                  | Python 镜像标签       | `3.12-alpine` | `>=3.9`，兼容 Alpine / Debian。                                                              |
+| `NEKOBOX_VERSION`           | 指定 NekoBox 版本     |               | 当 `NEKOBOX_UNSTABLE` 为 `true` 时，此参数可以为提交的完整或短哈希值。                       |
+| `NEKOBOX_UNSTABLE`          | 是否构建非稳定版本    | `false`       | 为 `true` 时将拉取存储库 `main` 分支代码。可以配合 `NEKOBOX_VERSION` 构建指定提交版本的镜像。|
+| `NEKOBOX_EXTRA_DEPS`        | 安装 NekoBox 可选依赖 | `audio`       | 以逗号分隔的字符串，留空表示不安装可选依赖。目前仅支持 `audio`。                             |
 
 ## 许可协议
 
