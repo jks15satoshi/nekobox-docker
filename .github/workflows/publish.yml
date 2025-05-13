@@ -8,7 +8,6 @@ on:
   workflow_dispatch:
 
 env:
-  PACKAGE_REGISTRY: ghcr.io
   IMAGE_NAME: jks15satoshi/nekobox
 
 jobs:
@@ -18,6 +17,7 @@ jobs:
     strategy:
       matrix:
         tag_variant: [latest, unstable]
+        registry: [ghcr.io, docker.io]
 
     permissions:
       contents: write
@@ -32,9 +32,9 @@ jobs:
       - name: Log in to the Container registry
         uses: docker/login-action@v3
         with:
-          registry: ${{ env.PACKAGE_REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: ${{ matrix.registry.url }}
+          username: ${{ github.repository_owner }}
+          password: ${{ matrix.registry == 'ghcr.io' && secrets.GITHUB_TOKEN || secrets.DOCKERHUB_TOKEN }}
 
       - name: Fetch version info of NekoBox
         id: fetch_version
@@ -62,7 +62,7 @@ jobs:
         id: check_image_tag
         uses: tyriis/docker-image-tag-exists@v2.1.0
         with:
-          registry: ghcr.io
+          registry: ${{ matrix.registry }}
           repository: ${{ env.IMAGE_NAME }}
           tag: ${{ steps.fetch_version.outputs.tag_name }}
 
@@ -77,20 +77,20 @@ jobs:
             "NEKOBOX_UNSTABLE=${{ matrix.tag_variant == 'unstable' && true || false }}"
           push: true
           tags: |
-            ${{ env.PACKAGE_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.fetch_version.outputs.tag_name }}
-            ${{ env.PACKAGE_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ matrix.tag_variant }}
+            ${{ matrix.registry }}/${{ env.IMAGE_NAME }}:${{ steps.fetch_version.outputs.tag_name }}
+            ${{ matrix.registry }}/${{ env.IMAGE_NAME }}:${{ matrix.tag_variant }}
 
       - name: Generate artifact attestation
         uses: actions/attest-build-provenance@v2
         if: ${{ steps.push_image.outcome == 'success' }}
         with:
-          subject-name: ${{ env.PACKAGE_REGISTRY }}/${{ env.IMAGE_NAME }}
+          subject-name: ${{ matrix.registry }}/${{ env.IMAGE_NAME }}
           subject-digest: ${{ steps.push_image.outputs.digest }}
           push-to-registry: true
 
       - name: Create release
         uses: ncipollo/release-action@v1
-        if: ${{ matrix.tag_variant == 'latest' && steps.push_image.outcome == 'success' && github.event_name != 'push' }}
+        if: ${{ matrix.tag_variant == 'latest' && matrix.registry == 'ghcr.io' && steps.push_image.outcome == 'success' && github.event_name != 'push' }}
         with:
           tag: "v${{ steps.fetch_version.outputs.base_version }}"
           body: |
