@@ -45,8 +45,8 @@ jobs:
 
           if [[ "${{ matrix.tag_variant }}" == "unstable" ]]; then
             commit_sha=$(curl -s https://api.github.com/repos/wyapx/nekobox/commits/main | jq -r ".sha")
-            base_version="${commit_sha}"
             tag_name="${base_version}-${commit_sha:0:7}"
+            base_version="${commit_sha}"
           else
             tag_name="${base_version}"
           fi
