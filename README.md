@@ -2,6 +2,10 @@
 
 [NekoBox](https://github.com/wyapx/nekobox) 的 Docker 镜像。
 
+[![Run linter](https://github.com/jks15satoshi/nekobox-docker/actions/workflows/lint.yml/badge.svg)](https://github.com/jks15satoshi/nekobox-docker/actions/workflows/lint.yml)
+[![GHCR](https://img.shields.io/badge/Registry-GHCR-blue?logo=docker)](https://github.com/jks15satoshi/nekobox-docker/pkgs/container/nekobox)
+[![Docker Hub](https://img.shields.io/badge/Registry-Docker_Hub-blue?logo=docker)](https://hub.docker.com/r/jks15satoshi/nekobox)
+
 ## 构建说明
 
 CI 流程会在每天 0 时（UTC）自动执行，检查 NekoBox 在 PyPI 中的最新版本以及 GitHub 存储库 `main` 分支的最新提交，以分别构建下述标签的镜像：
@@ -9,12 +13,15 @@ CI 流程会在每天 0 时（UTC）自动执行，检查 NekoBox 在 PyPI 中�
 - `latest`, `<release>[-rev.x]`：最新的已发布版本，基于 PyPI 中的最新版本构建。
   - `release` 为 NekoBox 的发布版本号；
   - `rev.x` 为镜像修订版本，在此镜像更新且 NekoBox 未发布新版本时追加。
-  > 示例：`0.1.0` `0.1.0-post.1` `0.1.0-post.1-rev.1`
+
+  当前版本： ![Latest image](https://img.shields.io/docker/v/jks15satoshi/nekobox/latest?label=latest&color=blue)
 - `unstable`, `<release>-<short_commit_sha>[-rev.x]`：最新的非稳定版本，基于存储库 `main` 分支的最新提交构建。
+
   - `release` 为 NekoBox 的发布版本号；
   - `short_commit_sha` 为 GitHub 存储库 `main` 分支的最新提交的 7 位短哈希值；
   - `rev.x` 为镜像修订版本，在此镜像更新且 NekoBox 未创建新提交时追加。
-  > 示例：`0.1.0-a1b2b3d` `0.1.0-a1b2b3d-rev.1`
+
+  当前版本：![Unstable image](https://img.shields.io/docker/v/jks15satoshi/nekobox/unstable?label=unstable&color=orange)
 
 > [!WARNING]
 > 对于非稳定版本镜像，任何可能的非预期行为皆**合乎预期**。除非你十分清楚自己的行为，否则请勿将其用于生产环境。请自行承担使用非稳定版本的风险。
