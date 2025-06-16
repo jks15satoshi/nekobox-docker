@@ -20,7 +20,7 @@ CI 流程会在每天 0 时（UTC）自动执行，检查 NekoBox 在 PyPI 中�
 
   - `release` 为 NekoBox 的发布版本号；
   - `short_commit_sha` 为 GitHub 存储库 `main` 分支的最新提交的 7 位短哈希值；
-  - `rev.x` 为镜像修订版本，在此镜像更新且 NekoBox 未创建新提交时追加。
+  - `rev.x` 为镜像修订版本，在此镜像更新且 NekoBox 未发布新版本时追加。
 
   当前版本：[![Unstable image](https://img.shields.io/docker/v/jks15satoshi/nekobox/unstable?label=unstable&color=chocolate)](https://github.com/jks15satoshi/nekobox-docker/pkgs/container/nekobox)
 
@@ -38,6 +38,7 @@ CI 流程基于 Python 3.12 构建镜像。包含 `audio` 额外依赖。
 
 ## 部署
 
+
 - 使用 `docker run`
 
   ```shell
@@ -47,7 +48,7 @@ CI 流程基于 Python 3.12 构建镜像。包含 `audio` 额外依赖。
     -e NEKOBOX_SIGN_SERVER=<sign_server_url> \
     -v <path_to_nekobox>:/nekobox \
     --restart unless-stopped \
-    ghcr.io/jks15satoshi/nekobox:latest
+    ghcr.io/jks15satoshi/nekobox:latest  # 或 jks15satoshi/nekobox:latest
   ```
 
 - 使用 Docker Compose
@@ -55,7 +56,7 @@ CI 流程基于 Python 3.12 构建镜像。包含 `audio` 额外依赖。
   ```yml
   services:
     nekobox:
-      image: ghcr.io/jks15satoshi/nekobox:latest
+      image: ghcr.io/jks15satoshi/nekobox:latest  # 或 jks15satoshi/nekobox:latest
       container_name: nekobox
       environment:
         - NEKOBOX_UIN=<your_account_id>
